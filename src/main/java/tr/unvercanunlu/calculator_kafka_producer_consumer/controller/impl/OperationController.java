@@ -22,31 +22,31 @@ import java.util.List;
 @RequestMapping(path = ApiConfig.OPERATION_API)
 public class OperationController implements IOperationController {
 
-    private final Logger logger = LoggerFactory.getLogger(OperationController.class);
+  private final Logger logger = LoggerFactory.getLogger(OperationController.class);
 
-    private final IOperationService operationService;
+  private final IOperationService operationService;
 
-    @Override
-    @GetMapping
-    public ResponseEntity<List<Operation>> retrieveAll() {
-        this.logger.info("Retrieve ALl Operations Request is received.");
+  @Override
+  @GetMapping
+  public ResponseEntity<List<Operation>> retrieveAll() {
+    this.logger.info("Retrieve ALl Operations Request is received.");
 
-        List<Operation> operationList = this.operationService.retrieveAll();
+    List<Operation> operationList = this.operationService.retrieveAll();
 
-        return ResponseEntity.status(HttpStatus.OK.value())
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(operationList);
-    }
+    return ResponseEntity.status(HttpStatus.OK.value())
+        .contentType(MediaType.APPLICATION_JSON)
+        .body(operationList);
+  }
 
-    @Override
-    @GetMapping(path = "/{code}")
-    public ResponseEntity<Operation> retrieve(@PathVariable(name = "code") Integer operationCode) {
-        this.logger.info("Retrieve Operation with '" + operationCode + "' Code is received.");
+  @Override
+  @GetMapping(path = "/{code}")
+  public ResponseEntity<Operation> retrieve(@PathVariable(name = "code") Integer operationCode) {
+    this.logger.info("Retrieve Operation with '" + operationCode + "' Code is received.");
 
-        Operation operation = this.operationService.retrieve(operationCode);
+    Operation operation = this.operationService.retrieve(operationCode);
 
-        return ResponseEntity.status(HttpStatus.OK.value())
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(operation);
-    }
+    return ResponseEntity.status(HttpStatus.OK.value())
+        .contentType(MediaType.APPLICATION_JSON)
+        .body(operation);
+  }
 }

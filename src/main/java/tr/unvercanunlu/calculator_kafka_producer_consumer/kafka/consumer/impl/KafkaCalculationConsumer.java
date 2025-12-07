@@ -17,49 +17,49 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class KafkaCalculationConsumer implements IKafkaConsumer<String, CalculationMessage> {
 
-    private final Logger logger = LoggerFactory.getLogger(KafkaCalculationConsumer.class);
+  private final Logger logger = LoggerFactory.getLogger(KafkaCalculationConsumer.class);
 
-    private final ICalculationService calculationService;
+  private final ICalculationService calculationService;
 
-    @Value(value = "${spring.kafka.topic.calculation}")
-    private String calculationTopic;
+  @Value(value = "${spring.kafka.topic.calculation}")
+  private String calculationTopic;
 
-    @Override
-    @KafkaListener(topics = "${spring.kafka.topic.calculation}", containerFactory = "calculationMessageListenerFactory", groupId = "${spring.kafka.group-id}")
-    public void receive(ConsumerRecord<String, CalculationMessage> payload) {
-        this.logger.info("Kafka Calculation Consumer is started.");
+  @Override
+  @KafkaListener(topics = "${spring.kafka.topic.calculation}", containerFactory = "calculationMessageListenerFactory", groupId = "${spring.kafka.group-id}")
+  public void receive(ConsumerRecord<String, CalculationMessage> payload) {
+    this.logger.info("Kafka Calculation Consumer is started.");
 
-        this.logger.info("Kafka Calculation Consumer consumed a new record from '" + this.calculationTopic + "' Kafka Topic.");
+    this.logger.info("Kafka Calculation Consumer consumed a new record from '" + this.calculationTopic + "' Kafka Topic.");
 
-        String key = payload.key();
-        CalculationMessage value = payload.value();
+    String key = payload.key();
+    CalculationMessage value = payload.value();
 
-        this.logger.debug("Consumed record key: '" + key + "'");
-        this.logger.debug("Consumed record value: " + value);
+    this.logger.debug("Consumed record key: '" + key + "'");
+    this.logger.debug("Consumed record value: " + value);
 
-        UUID calculationId = UUID.fromString(key);
+    UUID calculationId = UUID.fromString(key);
 
-        Double result = switch (value.getOperationCode()) {
-            case 0 -> (double) value.getFirst() + (double) value.getSecond();
-            case 1 -> (double) value.getFirst() - (double) value.getSecond();
-            case 2 -> (double) value.getFirst() * (double) value.getSecond();
-            case 3 -> (double) value.getFirst() / (double) value.getSecond();
-            case 4 -> (double) value.getFirst() % (double) value.getSecond();
-            case 5 -> Math.pow(value.getFirst(), value.getSecond());
-            case 6 -> ((double) value.getFirst() + (double) value.getSecond()) / 2;
-            case 7 -> (double) Math.max(value.getFirst(), value.getSecond());
-            case 8 -> (double) Math.min(value.getFirst(), value.getSecond());
-            default -> null;
-        };
+    Double result = switch (value.getOperationCode()) {
+      case 0 -> (double) value.getFirst() + (double) value.getSecond();
+      case 1 -> (double) value.getFirst() - (double) value.getSecond();
+      case 2 -> (double) value.getFirst() * (double) value.getSecond();
+      case 3 -> (double) value.getFirst() / (double) value.getSecond();
+      case 4 -> (double) value.getFirst() % (double) value.getSecond();
+      case 5 -> Math.pow(value.getFirst(), value.getSecond());
+      case 6 -> ((double) value.getFirst() + (double) value.getSecond()) / 2;
+      case 7 -> (double) Math.max(value.getFirst(), value.getSecond());
+      case 8 -> (double) Math.min(value.getFirst(), value.getSecond());
+      default -> null;
+    };
 
-        this.logger.info("Calculation with '" + calculationId + "' id is done.");
+    this.logger.info("Calculation with '" + calculationId + "' id is done.");
 
-        this.calculationService.setResult(calculationId, result);
+    this.calculationService.setResult(calculationId, result);
 
-        this.calculationService.setCompleteness(calculationId, Boolean.TRUE);
+    this.calculationService.setCompleteness(calculationId, Boolean.TRUE);
 
-        this.logger.info("Calculation with '" + calculationId + "' id is updated.");
+    this.logger.info("Calculation with '" + calculationId + "' id is updated.");
 
-        this.logger.info("Kafka Calculation Consumer is end.");
-    }
+    this.logger.info("Kafka Calculation Consumer is end.");
+  }
 }

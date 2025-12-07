@@ -6,4 +6,5 @@ import tr.unvercanunlu.calculator_kafka_producer_consumer.model.entity.Operation
 
 @Repository
 public interface IOperationRepository extends JpaRepository<Operation, Integer> {
+
 }

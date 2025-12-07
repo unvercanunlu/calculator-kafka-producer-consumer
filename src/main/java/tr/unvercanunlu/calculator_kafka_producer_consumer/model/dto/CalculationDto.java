@@ -14,16 +14,16 @@ import java.util.UUID;
 @AllArgsConstructor
 public class CalculationDto implements Serializable {
 
-    private UUID id;
+  private UUID id;
 
-    private Boolean done;
+  private Boolean done;
 
-    private Operation operation;
+  private Operation operation;
 
-    private Integer first;
+  private Integer first;
 
-    private Integer second;
+  private Integer second;
 
-    private Double result;
+  private Double result;
 
 }

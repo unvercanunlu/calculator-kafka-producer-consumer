@@ -12,20 +12,20 @@ import java.util.UUID;
 @Repository
 public interface ICalculationRepository extends JpaRepository<Calculation, UUID> {
 
-    @Modifying
-    @Query(value = "UPDATE \"calculation\" " +
-            "SET \"calculation\".\"result\" = :result " +
-            "WHERE \"calculation\".\"id\" = :calculationId", nativeQuery = true)
-    void setResult(
-            @Param(value = "calculationId") UUID calculationId,
-            @Param(value = "result") Double result);
+  @Modifying
+  @Query(value = "UPDATE \"calculation\" " +
+      "SET \"calculation\".\"result\" = :result " +
+      "WHERE \"calculation\".\"id\" = :calculationId", nativeQuery = true)
+  void setResult(
+      @Param(value = "calculationId") UUID calculationId,
+      @Param(value = "result") Double result);
 
-    @Modifying
-    @Query(value = "UPDATE \"calculation\" " +
-            "SET \"calculation\".\"done\" = :done " +
-            "WHERE \"calculation\".\"id\" = :calculationId", nativeQuery = true)
-    void setCompleteness(
-            @Param(value = "calculationId") UUID calculationId,
-            @Param(value = "done") Boolean done);
+  @Modifying
+  @Query(value = "UPDATE \"calculation\" " +
+      "SET \"calculation\".\"done\" = :done " +
+      "WHERE \"calculation\".\"id\" = :calculationId", nativeQuery = true)
+  void setCompleteness(
+      @Param(value = "calculationId") UUID calculationId,
+      @Param(value = "done") Boolean done);
 
 }

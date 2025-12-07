@@ -13,13 +13,13 @@ import java.util.List;
 @Validated
 public interface IOperationController {
 
-    ResponseEntity<List<Operation>> retrieveAll();
+  ResponseEntity<List<Operation>> retrieveAll();
 
-    ResponseEntity<Operation> retrieve(
-            @NotNull(message = "Operation Code should not be null.")
-            @Min(value = 0, message = "Operation Code should be at least zero.")
-            @Max(value = 8, message = "Operation Code should be at most eight.")
-            @Digits(integer = 1, fraction = 0, message = "Operation Code should be integer and has at most one digit.")
-            Integer operationCode);
+  ResponseEntity<Operation> retrieve(
+      @NotNull(message = "Operation Code should not be null.")
+      @Min(value = 0, message = "Operation Code should be at least zero.")
+      @Max(value = 8, message = "Operation Code should be at most eight.")
+      @Digits(integer = 1, fraction = 0, message = "Operation Code should be integer and has at most one digit.")
+      Integer operationCode);
 
 }

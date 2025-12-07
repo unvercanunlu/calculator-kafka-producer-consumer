@@ -18,11 +18,11 @@ import java.io.Serializable;
 @Table(name = "operation")
 public class Operation implements Serializable {
 
-    @Id
-    @Column(name = "code")
-    private Integer code;
+  @Id
+  @Column(name = "code")
+  private Integer code;
 
-    @Column(name = "name")
-    private String name;
+  @Column(name = "name")
+  private String name;
 
 }

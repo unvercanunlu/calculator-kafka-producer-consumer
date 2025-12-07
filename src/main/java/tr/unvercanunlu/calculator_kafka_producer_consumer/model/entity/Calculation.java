@@ -16,24 +16,24 @@ import java.util.UUID;
 @Table(name = "calculation")
 public class Calculation implements Serializable {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "id")
-    private UUID id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.UUID)
+  @Column(name = "id")
+  private UUID id;
 
-    @Column(name = "done")
-    private Boolean done;
+  @Column(name = "done")
+  private Boolean done;
 
-    @Column(name = "operation_code")
-    private Integer operationCode;
+  @Column(name = "operation_code")
+  private Integer operationCode;
 
-    @Column(name = "first")
-    private Integer first;
+  @Column(name = "first")
+  private Integer first;
 
-    @Column(name = "second")
-    private Integer second;
+  @Column(name = "second")
+  private Integer second;
 
-    @Column(name = "result")
-    private Double result;
+  @Column(name = "result")
+  private Double result;
 
 }

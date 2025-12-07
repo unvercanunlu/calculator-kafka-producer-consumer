@@ -24,107 +24,107 @@ import java.util.function.BiFunction;
 @RequiredArgsConstructor
 public class CalculationService implements ICalculationService {
 
-    private final Logger logger = LoggerFactory.getLogger(CalculationService.class);
+  private final Logger logger = LoggerFactory.getLogger(CalculationService.class);
 
-    private final IKafkaProducer<UUID, Calculation> calculationKafkaProducer;
+  private final IKafkaProducer<UUID, Calculation> calculationKafkaProducer;
 
-    private final ICalculationRepository calculationRepository;
+  private final ICalculationRepository calculationRepository;
 
-    private final IOperationService operationService;
+  private final IOperationService operationService;
 
-    private final BiFunction<Calculation, Operation, CalculationDto> calculationToCalculationDtoMapper =
-            (calculation, operation) -> CalculationDto.builder()
-                    .id(calculation.getId())
-                    .first(calculation.getFirst())
-                    .second(calculation.getSecond())
-                    .result(calculation.getResult())
-                    .operation(operation)
-                    .done(calculation.getDone())
-                    .build();
+  private final BiFunction<Calculation, Operation, CalculationDto> calculationToCalculationDtoMapper =
+      (calculation, operation) -> CalculationDto.builder()
+          .id(calculation.getId())
+          .first(calculation.getFirst())
+          .second(calculation.getSecond())
+          .result(calculation.getResult())
+          .operation(operation)
+          .done(calculation.getDone())
+          .build();
 
-    @Override
-    @Transactional
-    public void create(CreateCalculationRequest request) {
-        Calculation calculation = Calculation.builder()
-                .first(request.getFirst())
-                .second(request.getSecond())
-                .operationCode(request.getOperationCode())
-                .done(Boolean.FALSE)
-                .build();
+  @Override
+  @Transactional
+  public void create(CreateCalculationRequest request) {
+    Calculation calculation = Calculation.builder()
+        .first(request.getFirst())
+        .second(request.getSecond())
+        .operationCode(request.getOperationCode())
+        .done(Boolean.FALSE)
+        .build();
 
-        this.logger.info("Calculation is created.");
+    this.logger.info("Calculation is created.");
 
-        this.logger.debug("Created Calculation: " + calculation);
+    this.logger.debug("Created Calculation: " + calculation);
 
-        calculation = this.calculationRepository.save(calculation);
+    calculation = this.calculationRepository.save(calculation);
 
-        this.logger.info("Calculation with '" + calculation.getId() + "' ID is saved to database.");
+    this.logger.info("Calculation with '" + calculation.getId() + "' ID is saved to database.");
 
-        this.logger.debug("Saved Calculation: " + calculation);
+    this.logger.debug("Saved Calculation: " + calculation);
 
-        this.calculationKafkaProducer.send(calculation.getId(), calculation);
+    this.calculationKafkaProducer.send(calculation.getId(), calculation);
 
-        this.logger.info("Calculation with '" + calculation.getId() + "' ID is sent to Kafka Topic using Kafka Calculation Producer.");
-    }
+    this.logger.info("Calculation with '" + calculation.getId() + "' ID is sent to Kafka Topic using Kafka Calculation Producer.");
+  }
 
-    @Override
-    @Transactional(readOnly = true)
-    public List<CalculationDto> retrieveAll() {
-        List<Calculation> calculationList = this.calculationRepository.findAll();
+  @Override
+  @Transactional(readOnly = true)
+  public List<CalculationDto> retrieveAll() {
+    List<Calculation> calculationList = this.calculationRepository.findAll();
 
-        this.logger.info("All Calculations are fetched from the database.");
+    this.logger.info("All Calculations are fetched from the database.");
 
-        this.logger.debug("Fetched Calculations: " + calculationList);
+    this.logger.debug("Fetched Calculations: " + calculationList);
 
-        Map<Integer, Operation> operationCache = new HashMap<>();
+    Map<Integer, Operation> operationCache = new HashMap<>();
 
-        List<Integer> operationCodes = calculationList.stream()
-                .map(Calculation::getOperationCode)
-                .distinct()
-                .toList();
+    List<Integer> operationCodes = calculationList.stream()
+        .map(Calculation::getOperationCode)
+        .distinct()
+        .toList();
 
-        operationCodes.forEach(operationCode -> {
-            if (!operationCache.containsKey(operationCode)) {
-                Operation operation = this.operationService.retrieve(operationCode);
+    operationCodes.forEach(operationCode -> {
+      if (!operationCache.containsKey(operationCode)) {
+        Operation operation = this.operationService.retrieve(operationCode);
 
-                operationCache.put(operationCode, operation);
-            }
-        });
+        operationCache.put(operationCode, operation);
+      }
+    });
 
-        return calculationList.stream()
-                .map(calculation -> this.calculationToCalculationDtoMapper.apply(calculation,
-                        operationCache.get(calculation.getOperationCode())))
-                .toList();
-    }
+    return calculationList.stream()
+        .map(calculation -> this.calculationToCalculationDtoMapper.apply(calculation,
+            operationCache.get(calculation.getOperationCode())))
+        .toList();
+  }
 
-    @Override
-    @Transactional(readOnly = true)
-    public CalculationDto retrieve(UUID calculationId) {
-        Calculation calculation = this.calculationRepository.findById(calculationId)
-                .orElseThrow(() -> new RuntimeException("Calculation with '" + calculationId + "' ID cannot be found."));
+  @Override
+  @Transactional(readOnly = true)
+  public CalculationDto retrieve(UUID calculationId) {
+    Calculation calculation = this.calculationRepository.findById(calculationId)
+        .orElseThrow(() -> new RuntimeException("Calculation with '" + calculationId + "' ID cannot be found."));
 
-        this.logger.info("Calculation with '" + calculationId + "' ID is fetched from the database.");
+    this.logger.info("Calculation with '" + calculationId + "' ID is fetched from the database.");
 
-        this.logger.debug("Fetched Calculation: " + calculation);
+    this.logger.debug("Fetched Calculation: " + calculation);
 
-        Operation operation = this.operationService.retrieve(calculation.getOperationCode());
+    Operation operation = this.operationService.retrieve(calculation.getOperationCode());
 
-        return this.calculationToCalculationDtoMapper.apply(calculation, operation);
-    }
+    return this.calculationToCalculationDtoMapper.apply(calculation, operation);
+  }
 
-    @Override
-    @Transactional
-    public void setResult(UUID calculationId, Double result) {
-        this.calculationRepository.setResult(calculationId, result);
+  @Override
+  @Transactional
+  public void setResult(UUID calculationId, Double result) {
+    this.calculationRepository.setResult(calculationId, result);
 
-        this.logger.info("Result of Calculation with '" + calculationId + "' ID is set to " + result + ".");
-    }
+    this.logger.info("Result of Calculation with '" + calculationId + "' ID is set to " + result + ".");
+  }
 
-    @Override
-    @Transactional
-    public void setCompleteness(UUID calculationId, Boolean done) {
-        this.calculationRepository.setCompleteness(calculationId, done);
+  @Override
+  @Transactional
+  public void setCompleteness(UUID calculationId, Boolean done) {
+    this.calculationRepository.setCompleteness(calculationId, done);
 
-        this.logger.info("Completeness of Calculation with '" + calculationId + "' ID is set to " + done + ".");
-    }
+    this.logger.info("Completeness of Calculation with '" + calculationId + "' ID is set to " + done + ".");
+  }
 }

@@ -21,45 +21,45 @@ import java.util.UUID;
 @RequestMapping(path = ApiConfig.CALCULATION_API)
 public class CalculationController implements ICalculationController {
 
-    private final Logger logger = LoggerFactory.getLogger(CalculationController.class);
+  private final Logger logger = LoggerFactory.getLogger(CalculationController.class);
 
-    private final ICalculationService calculationService;
+  private final ICalculationService calculationService;
 
-    @Override
-    @PostMapping
-    public ResponseEntity<Void> create(@RequestBody CreateCalculationRequest request) {
-        this.logger.info("Create Calculation Request is received.");
+  @Override
+  @PostMapping
+  public ResponseEntity<Void> create(@RequestBody CreateCalculationRequest request) {
+    this.logger.info("Create Calculation Request is received.");
 
-        this.logger.debug("Received Create Calculation Request: " + request);
+    this.logger.debug("Received Create Calculation Request: " + request);
 
-        this.calculationService.create(request);
+    this.calculationService.create(request);
 
-        return ResponseEntity.status(HttpStatus.OK.value())
-                .contentType(MediaType.APPLICATION_JSON)
-                .build();
-    }
+    return ResponseEntity.status(HttpStatus.OK.value())
+        .contentType(MediaType.APPLICATION_JSON)
+        .build();
+  }
 
-    @Override
-    @GetMapping
-    public ResponseEntity<List<CalculationDto>> retrieveAll() {
-        this.logger.info("Retrieve ALl Calculations Request is received.");
+  @Override
+  @GetMapping
+  public ResponseEntity<List<CalculationDto>> retrieveAll() {
+    this.logger.info("Retrieve ALl Calculations Request is received.");
 
-        List<CalculationDto> calculationDtoList = this.calculationService.retrieveAll();
+    List<CalculationDto> calculationDtoList = this.calculationService.retrieveAll();
 
-        return ResponseEntity.status(HttpStatus.OK.value())
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(calculationDtoList);
-    }
+    return ResponseEntity.status(HttpStatus.OK.value())
+        .contentType(MediaType.APPLICATION_JSON)
+        .body(calculationDtoList);
+  }
 
-    @Override
-    @GetMapping(path = "/{id}")
-    public ResponseEntity<CalculationDto> retrieve(@PathVariable(name = "id") UUID calculationId) {
-        this.logger.info("Retrieve Calculation with '" + calculationId + "' ID is received.");
+  @Override
+  @GetMapping(path = "/{id}")
+  public ResponseEntity<CalculationDto> retrieve(@PathVariable(name = "id") UUID calculationId) {
+    this.logger.info("Retrieve Calculation with '" + calculationId + "' ID is received.");
 
-        CalculationDto calculationDto = this.calculationService.retrieve(calculationId);
+    CalculationDto calculationDto = this.calculationService.retrieve(calculationId);
 
-        return ResponseEntity.status(HttpStatus.OK.value())
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(calculationDto);
-    }
+    return ResponseEntity.status(HttpStatus.OK.value())
+        .contentType(MediaType.APPLICATION_JSON)
+        .body(calculationDto);
+  }
 }

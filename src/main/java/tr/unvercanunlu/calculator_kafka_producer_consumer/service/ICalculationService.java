@@ -12,21 +12,21 @@ import java.util.UUID;
 @Validated
 public interface ICalculationService {
 
-    void create(
-            @Valid
-            @NotNull(message = "Create Calculation Request should not be null.")
-            CreateCalculationRequest request);
+  void create(
+      @Valid
+      @NotNull(message = "Create Calculation Request should not be null.")
+      CreateCalculationRequest request);
 
-    List<CalculationDto> retrieveAll();
+  List<CalculationDto> retrieveAll();
 
-    CalculationDto retrieve(@NotNull(message = "Calculation ID should not be null.") UUID calculationId);
+  CalculationDto retrieve(@NotNull(message = "Calculation ID should not be null.") UUID calculationId);
 
-    void setResult(
-            @NotNull(message = "Calculation ID should not be null.") UUID calculationId,
-            @NotNull(message = "Result should not be null.") Double result);
+  void setResult(
+      @NotNull(message = "Calculation ID should not be null.") UUID calculationId,
+      @NotNull(message = "Result should not be null.") Double result);
 
-    void setCompleteness(
-            @NotNull(message = "Calculation ID should not be null.") UUID calculationId,
-            @NotNull(message = "Done should not be null.") Boolean done);
+  void setCompleteness(
+      @NotNull(message = "Calculation ID should not be null.") UUID calculationId,
+      @NotNull(message = "Done should not be null.") Boolean done);
 
 }
